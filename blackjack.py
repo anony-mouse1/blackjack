@@ -125,9 +125,11 @@ def payouts():
         print("Malfunction")
 
 
-
-
 while player_chips >0:
+    player_cards = []
+    dealer_cards = []
+    player_status = ''
+    dealer_status = ''
     suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts']
     nums = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
     deck = [f"{j} of {i}" for j in nums for i in suits]
@@ -135,10 +137,6 @@ while player_chips >0:
     '''deck = ['2 of Spades', 'Q of Clubs', 'K of Diamonds', 'J of Spades', 'A of Clubs', '2 of Diamonds',
             '3 of Spades',
             '2 of Clubs', '4 of Diamonds']'''
-    player_cards = []
-    dealer_cards = []
-    player_status = ''
-    dealer_status = ''
 
     # distribute cards to player and dealer, turn them into numerical values.
 
@@ -157,6 +155,7 @@ while player_chips >0:
                 break
             else:
                 payouts()
+                break
 
     print(f"D STATUS {dealer_status}")
     print(f"P STATUS {player_status}")
