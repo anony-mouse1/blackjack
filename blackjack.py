@@ -11,8 +11,8 @@ change_cards_start = {'A ': 11, 'K ': 10, 'Q ': 10, 'J ': 10}
 def distribution():
     # global not needed for cards, nor deck
     # global is needed for chips.
-    print(player_cards)
-    print(dealer_cards)
+    # print(player_cards) its empty (which is good)
+    # print(dealer_cards) its empty (which is good)
     print(f"Player Cards: {deck[0]} and {deck[1]}")
     for i in range(2):
         card = deck[i][:2]
@@ -28,10 +28,12 @@ def distribution():
         else:
             dealer_cards.append(int(card))
 
-    print(f"Dealer Cards: {deck[2]} and {deck[3]}")  # store deck[3] somewhere else.
-    print(f"Sum of player card values: {sum(player_cards)}")
+    print(f"Dealer Cards: {deck[2]} and x")  # store deck[3] somewhere else--stored in temp
+    print(f"Sum of Player Card Values: {sum(player_cards)}")
+    print(f"Player's Cards: {player_cards}")
     for i in range(4):
         deck.pop(0)
+
 
 # here will print original deck
 
@@ -52,8 +54,9 @@ def hit(person_cards):
             print(f"You received an Ace valued at {hitting_card[1]}")
     else:
         person_cards.append(int(hitting_card))
-    print(f"During hit {player_cards}")  # it works
-    print(f"Sum of cards during hit {sum(player_cards)}")
+    # print(f"During hit {player_cards}")  # it works
+    print(f"Total card values: {sum(person_cards)}")
+    print(f"Cards: {person_cards}")
     deck.pop(0)
     # len(deck) in and out of function works fine
 
@@ -78,7 +81,7 @@ def player_input():
         if sum(player_cards) == 21:
             print("Player has received blackjack!")
             player_status = 'blackjack'
-            player_chips += 10
+            player_chips += (bet * 5 / 2)
 
         else:
             player_status = 'bust'
@@ -87,7 +90,9 @@ def player_input():
 
 def dealer_input():
     global dealer_status
-    print("Dealer's turn...")
+    print("\nDealer's turn...")
+    print(f"Dealer, flipping second card...\nDealer, your cards are {temp[0]} and {temp[1]}")
+
     while sum(dealer_cards) <= 16:
         hit(dealer_cards)
 
@@ -108,24 +113,27 @@ def dealer_input():
 
 
 def payouts():
+    global player_chips
     # player status at this point has to be stand
     if player_status == 'stand':
         if dealer_status == 'stand':
-
             # don't need the top two lines ngl
             if sum(player_cards) > sum(dealer_cards):
                 print("Player has won standoff.")
+                player_chips += (bet * 2)
             elif sum(player_cards) > sum(dealer_cards):
                 print("Dealer has won standoff. ")
             else:
                 print("Standoff has resulted in a tie--bets pushed")
+                player_chips += bet
         else:
             print("Malfunction")
     else:
         print("Malfunction")
 
 
-while player_chips >0:
+while player_chips > 0:
+
     player_cards = []
     dealer_cards = []
     player_status = ''
@@ -134,9 +142,25 @@ while player_chips >0:
     nums = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
     deck = [f"{j} of {i}" for j in nums for i in suits]
 
-    '''deck = ['2 of Spades', 'Q of Clubs', 'K of Diamonds', 'J of Spades', 'A of Clubs', '2 of Diamonds',
+    shuffle(deck)
+    temp = [deck[2], deck[3]]
+    '''deck = ['J of Spades', 'Q of Clubs', 'K of Diamonds', 'J of Spades', 'A of Clubs', '2 of Diamonds',
             '3 of Spades',
-            '2 of Clubs', '4 of Diamonds']'''
+     '2 of Clubs', '4 of Diamonds'] '''
+
+    print("\nNEW ROUND\n")
+    print(f"Your chips are: {player_chips}")
+    while True:
+        try:
+            bet = int(input("Betting value: "))
+            if int(bet) <= player_chips and int(bet) % 5 == 0 and int(bet) != 0:
+                print(f"Your betting value is {bet}")
+                player_chips -= bet
+                print(f"\nUpdated chips: {player_chips}")
+                break
+        except:
+            print("Not a valid input")
+            continue
 
     # distribute cards to player and dealer, turn them into numerical values.
 
@@ -157,9 +181,10 @@ while player_chips >0:
                 payouts()
                 break
 
-    print(f"D STATUS {dealer_status}")
-    print(f"P STATUS {player_status}")
-else:
-    print("Insufficient chips")
+    # print(f"D STATUS {dealer_status}")
+    # print(f"P STATUS {player_status}")
 
-    #print(player_cards)  # still 'globalled' without calling global
+else:
+    print("Insufficient chips. Rerun program.")
+
+    # print(player_cards)  # still 'globalled' without calling global
