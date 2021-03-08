@@ -5,21 +5,26 @@ player_chips = 500
 
 # set two dictionaries--one for card distribution and the other for while hitting
 change_cards_during = {'A ': [1, 11], 'K ': 10, 'Q ': 10, 'J ': 10}
-change_cards_start = {'A ': 11, 'K ': 10, 'Q ': 10, 'J ': 10}
+change_cards_start = {'A ': 11, 'K ': 10, 'Q ': 10, 'J ': 10} #gah this doesn't work for two aces.
 
 
 def distribution():
-    # global not needed for cards, nor deck
+    global player_cards, dealer_cards
+    # global not needed for cards, nor deck--actually global is needed if you are completely altering the deck, in which case i am.
     # global is needed for chips.
-    # print(player_cards) its empty (which is good)
-    # print(dealer_cards) its empty (which is good)
+    print(player_cards) #its empty (which is good)
+    print(dealer_cards) #its empty (which is good)
     print(f"Player Cards: {deck[0]} and {deck[1]}")
     for i in range(2):
         card = deck[i][:2]
-        if card in change_cards_start:
+        if card in change_cards_during:
             player_cards.append(change_cards_start.get(card))
         else:
             player_cards.append(int(card))
+        if player_cards == [11,11]:
+            player_cards = [1,11]
+
+
 
     for i in range(2, 4):
         card = deck[i][:2]
@@ -28,6 +33,8 @@ def distribution():
         else:
             dealer_cards.append(int(card))
 
+        if dealer_cards == [11,11]:
+            dealer_cards = [1,11]
     print(f"Dealer Cards: {deck[2]} and x")  # store deck[3] somewhere else--stored in temp
     print(f"Sum of Player Card Values: {sum(player_cards)}")
     print(f"Player's Cards: {player_cards}")
@@ -42,6 +49,7 @@ def distribution():
 # here will print altered deck
 
 def hit(person_cards):
+    #global player_cards, dealer_cards
     print(f"\nHITTING...\nThe card is {deck[0]}")
     hitting_card = deck[0][:2]
     hitting_card = change_cards_during.get(hitting_card, hitting_card)
@@ -55,6 +63,10 @@ def hit(person_cards):
     else:
         person_cards.append(int(hitting_card))
     # print(f"During hit {player_cards}")  # it works
+    if sum(person_cards)>21:
+        person_cards[:] = [1 if x == 11 else x for x in person_cards]
+        print("Ace Values have changed based on the sum of your card values.")
+
     print(f"Total card values: {sum(person_cards)}")
     print(f"Cards: {person_cards}")
     deck.pop(0)
@@ -92,7 +104,7 @@ def dealer_input():
     global dealer_status
     print("\nDealer's turn...")
     print(f"Dealer, flipping second card...\nDealer, your cards are {temp[0]} and {temp[1]}")
-
+    print(dealer_cards)
     while sum(dealer_cards) <= 16:
         hit(dealer_cards)
 
@@ -121,9 +133,9 @@ def payouts():
             if sum(player_cards) > sum(dealer_cards):
                 print("Player has won standoff.")
                 player_chips += (bet * 2)
-            elif sum(player_cards) > sum(dealer_cards):
+            elif sum(player_cards) < sum(dealer_cards):
                 print("Dealer has won standoff. ")
-            else:
+            elif sum(player_cards) == sum(dealer_cards):
                 print("Standoff has resulted in a tie--bets pushed")
                 player_chips += bet
         else:
@@ -143,11 +155,10 @@ while player_chips > 0:
     deck = [f"{j} of {i}" for j in nums for i in suits]
 
     shuffle(deck)
-    temp = [deck[2], deck[3]]
-    '''deck = ['J of Spades', 'Q of Clubs', 'K of Diamonds', 'J of Spades', 'A of Clubs', '2 of Diamonds',
+    '''deck = ['A of Spades', '2 of Clubs', '6 of Diamonds', '2 of Spades', 'A of Clubs', 'A of Diamonds',
             '3 of Spades',
-     '2 of Clubs', '4 of Diamonds'] '''
-
+     '2 of Clubs', '4 of Diamonds', '8 of Spades', '3 of Diamonds', '3 of Hearts', '2 of Diamonds']'''
+    temp = [deck[2], deck[3]]
     print("\nNEW ROUND\n")
     print(f"Your chips are: {player_chips}")
     while True:
@@ -171,6 +182,7 @@ while player_chips > 0:
             break
         elif player_status == 'bust':
             break
+
         else:
             dealer_input()
             if dealer_status == 'blackjack':
