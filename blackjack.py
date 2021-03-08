@@ -200,3 +200,5 @@ else:
     print("Insufficient chips. Rerun program.")
 
     # print(player_cards)  # still 'globalled' without calling global
+
+# next step- turn into classes
