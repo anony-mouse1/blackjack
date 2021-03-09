@@ -65,7 +65,8 @@ def hit(person_cards):
     # print(f"During hit {player_cards}")  # it works
     if sum(person_cards)>21:
         person_cards[:] = [1 if x == 11 else x for x in person_cards]
-        print("Ace Values have changed based on the sum of your card values.")
+        if 1 in person_cards:
+            print("Ace Values have changed based on the sum of your card values.")
 
     print(f"Total card values: {sum(person_cards)}")
     print(f"Cards: {person_cards}")
@@ -155,7 +156,7 @@ while player_chips > 0:
     deck = [f"{j} of {i}" for j in nums for i in suits]
 
     shuffle(deck)
-    '''deck = ['A of Spades', '2 of Clubs', '6 of Diamonds', '2 of Spades', 'A of Clubs', 'A of Diamonds',
+    '''deck = ['6 of Spades', 'A of Clubs', '7 of Diamonds', '8 of Spades', '10 of Clubs', 'A of Diamonds', #test deck
             '3 of Spades',
      '2 of Clubs', '4 of Diamonds', '8 of Spades', '3 of Diamonds', '3 of Hearts', '2 of Diamonds']'''
     temp = [deck[2], deck[3]]
@@ -173,6 +174,12 @@ while player_chips > 0:
             print("Not a valid input")
             continue
 
+    def dealer_bust():
+        global player_chips
+        if player_status == 'stand':
+            player_chips += (bet * 2)
+            print("Player has won whilst dealer has busted! ")
+
     # distribute cards to player and dealer, turn them into numerical values.
 
     while True:
@@ -188,6 +195,7 @@ while player_chips > 0:
             if dealer_status == 'blackjack':
                 break
             if dealer_status == 'bust':
+                dealer_bust()
                 break
             else:
                 payouts()
